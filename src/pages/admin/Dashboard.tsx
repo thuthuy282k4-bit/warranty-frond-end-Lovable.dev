@@ -11,6 +11,10 @@ import {
   Laptop,
   Mouse,
   Camera,
+  Printer,
+  Trash2,
+  Edit3,
+  ImageOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
