@@ -37,6 +37,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
+import { AddProductModal } from "@/components/admin/AddProductModal";
 
 type Request = {
   id: string;
@@ -150,6 +151,7 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState("");
   const [productSearch, setProductSearch] = useState("");
   const [productCategoryFilter, setProductCategoryFilter] = useState<string[]>([]);
+  const [addProductOpen, setAddProductOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -246,7 +248,10 @@ export default function AdminDashboard() {
               <Button variant="outline" className="border-gray-300">
                 Thêm tài khoản
               </Button>
-              <Button className="bg-black text-white hover:bg-neutral-800">
+              <Button
+                className="bg-black text-white hover:bg-neutral-800"
+                onClick={() => setAddProductOpen(true)}
+              >
                 <Plus className="h-4 w-4" />
                 Sản phẩm
               </Button>
@@ -414,7 +419,10 @@ export default function AdminDashboard() {
                         ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button className="bg-black text-white hover:bg-neutral-800">
+                    <Button
+                      className="bg-black text-white hover:bg-neutral-800"
+                      onClick={() => setAddProductOpen(true)}
+                    >
                       <Plus className="h-4 w-4" />
                       Thêm
                     </Button>
@@ -535,6 +543,13 @@ export default function AdminDashboard() {
           </div>
         </div>
       </main>
+
+      <AddProductModal
+        open={addProductOpen}
+        onOpenChange={setAddProductOpen}
+        existingCodes={products.map((p) => p.code)}
+        categories={[...PRODUCT_CATEGORIES]}
+      />
     </div>
   );
 }
