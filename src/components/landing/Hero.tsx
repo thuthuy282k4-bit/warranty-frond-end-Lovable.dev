@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 
 const Hero = () => {
   return (
-    <section className="container grid gap-12 py-20 lg:grid-cols-2 lg:gap-16 lg:py-28">
+    <section className="bg-gradient-to-b from-gray-100 to-white">
+      <div className="container grid gap-12 py-20 lg:grid-cols-2 lg:gap-16 lg:py-28">
       <div className="flex flex-col justify-center">
         <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-foreground md:text-6xl lg:text-7xl">
           Giải pháp <em className="font-bold italic">Bảo hành</em>
@@ -26,7 +27,7 @@ const Hero = () => {
       </div>
 
       <div className="flex items-center justify-center">
-        <div className="w-full max-w-md rounded-2xl bg-card p-8 shadow-[var(--hero-shadow)] border border-border/50">
+        <div className="w-full max-w-md rounded-2xl bg-card p-8 border border-border/50 shadow-[0_0_60px_-15px_rgba(150,180,255,0.4)]">
           <h3 className="text-center text-xl font-semibold text-foreground">Tra cứu nhanh</h3>
           <p className="mt-2 text-center text-sm text-muted-foreground">
             Nhập mã sản phẩm để xem thời hạn bảo hành
@@ -42,6 +43,7 @@ const Hero = () => {
             <Button className="h-11 rounded-lg px-5">Tra cứu</Button>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );
