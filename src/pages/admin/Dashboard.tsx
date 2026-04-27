@@ -70,6 +70,33 @@ const requests: Request[] = [
   },
 ];
 
+type Product = {
+  code: string;
+  name: string;
+  customer: string;
+  hasImage: boolean;
+};
+
+const products: Product[] = [
+  { code: "LAP-2023-002", name: "MacBook Pro M2 14-inch", customer: "Tran Thi Khach", hasImage: true },
+  { code: "ACC-2023-001", name: "Logitech MX Master 3S", customer: "Tran Thi Khach", hasImage: true },
+  { code: "SN123", name: "Laptop", customer: "Tran Thi Khach", hasImage: false },
+  { code: "SN1", name: "SPI", customer: "Tran Thi Khach", hasImage: false },
+  { code: "S/N: AX-P3245-2026-001", name: "Camera IP Dome AXIS P3245-V", customer: "Tran Thi Khach", hasImage: true },
+];
+
+type Category = {
+  name: string;
+  description: string;
+};
+
+const categories: Category[] = [
+  { name: "Laptop", description: "Laptop devices and notebooks" },
+  { name: "PC", description: "Desktop computers and workstations" },
+  { name: "Accessories", description: "Keyboards, mice, monitors, etc." },
+  { name: "An Ninh Giám Sát", description: "Các loại camera" },
+];
+
 const statusConfig = {
   resolved: { label: "Đã giải quyết", className: "bg-green-100 text-green-700 hover:bg-green-100" },
   processing: { label: "Đang xử lý", className: "bg-blue-100 text-blue-700 hover:bg-blue-100" },
