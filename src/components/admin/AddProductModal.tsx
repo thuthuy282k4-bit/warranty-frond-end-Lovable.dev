@@ -37,6 +37,14 @@ export function AddProductModal({
   const [customer, setCustomer] = useState("");
   const [purchaseDate, setPurchaseDate] = useState("");
   const [warranty, setWarranty] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFiles = (list: FileList) => {
+    const imgs = Array.from(list).filter((f) => f.type.startsWith("image/"));
+    setFiles((prev) => [...prev, ...imgs]);
+  };
 
   useEffect(() => {
     if (!open) {
@@ -46,6 +54,8 @@ export function AddProductModal({
       setCustomer("");
       setPurchaseDate("");
       setWarranty("");
+      setFiles([]);
+      setDragOver(false);
     }
   }, [open]);
 
