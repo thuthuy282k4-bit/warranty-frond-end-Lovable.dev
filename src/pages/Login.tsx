@@ -16,9 +16,9 @@ const Login = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-900 text-white font-bold">
-              A
+              W
             </div>
-            <span className="font-bold text-neutral-900">Ánh Sáng Co.</span>
+            <span className="font-bold text-neutral-900">Ánh Sáng Warranty</span>
           </div>
 
           <h1 className="mt-6 text-2xl font-bold text-neutral-900">Đăng nhập</h1>
