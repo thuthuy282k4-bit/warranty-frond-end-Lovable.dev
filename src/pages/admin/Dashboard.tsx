@@ -543,6 +543,13 @@ export default function AdminDashboard() {
           </div>
         </div>
       </main>
+
+      <AddProductModal
+        open={addProductOpen}
+        onOpenChange={setAddProductOpen}
+        existingCodes={products.map((p) => p.code)}
+        categories={[...PRODUCT_CATEGORIES]}
+      />
     </div>
   );
 }
