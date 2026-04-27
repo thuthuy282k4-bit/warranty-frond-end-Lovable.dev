@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const CTA = () => {
@@ -10,11 +11,14 @@ const CTA = () => {
           Đăng nhập bây giờ để truy cập hệ thống quản lý bảo hành
         </p>
         <Button
+          asChild
           variant="secondary"
           className="mt-8 rounded-full bg-white px-6 py-6 text-sm font-medium text-neutral-900 hover:bg-neutral-100 group"
         >
-          Đăng nhập ngay
-          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          <Link to="/login">
+            Đăng nhập ngay
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </Button>
       </div>
     </section>

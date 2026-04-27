@@ -1,4 +1,5 @@
 import { ArrowRight, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -15,9 +16,11 @@ const Hero = () => {
           Tra cứu thông tin bảo hành tức thì và theo dõi tiến độ xử lý yêu cầu kỹ thuật trực tuyến. Công ty Cổ phần Giải pháp Công nghệ Ánh Sáng.
         </p>
         <div className="mt-8">
-          <Button className="rounded-full px-6 py-6 text-sm group">
-            Truy cập Dashboard
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          <Button asChild className="rounded-full px-6 py-6 text-sm group">
+            <Link to="/login">
+              Truy cập Dashboard
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
           </Button>
         </div>
       </div>

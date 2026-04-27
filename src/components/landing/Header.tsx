@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Logo = ({ name = "Ánh Sáng Warranty" }: { name?: string }) => (
@@ -21,7 +22,9 @@ const Header = () => {
           <a href="#modules" className="hidden text-sm text-muted-foreground hover:text-foreground transition-colors md:block">
             Về hệ thống
           </a>
-          <Button className="rounded-full px-5">Đăng nhập</Button>
+          <Button asChild className="rounded-full px-5">
+            <Link to="/login">Đăng nhập</Link>
+          </Button>
         </nav>
       </div>
     </header>
