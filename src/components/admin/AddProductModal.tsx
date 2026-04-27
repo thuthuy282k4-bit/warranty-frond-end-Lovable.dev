@@ -1,4 +1,5 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef, type DragEvent } from "react";
+import { UploadCloud, X as XIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -171,6 +172,69 @@ export function AddProductModal({
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        {/* Image upload */}
+        <div className="space-y-1.5 mt-4">
+          <Label className="text-sm">Hình ảnh sản phẩm (có thể chọn nhiều)</Label>
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e: DragEvent<HTMLDivElement>) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e: DragEvent<HTMLDivElement>) => {
+              e.preventDefault();
+              setDragOver(false);
+              if (e.dataTransfer.files?.length) {
+                handleFiles(e.dataTransfer.files);
+              }
+            }}
+            className={cn(
+              "flex flex-col items-center justify-center w-full p-6 rounded-lg border-2 border-dashed cursor-pointer transition-colors",
+              dragOver
+                ? "border-neutral-900 bg-neutral-100"
+                : "border-gray-300 bg-gray-50 hover:bg-gray-100",
+            )}
+          >
+            <UploadCloud className="h-7 w-7 text-gray-400" />
+            <p className="text-sm font-medium text-gray-700 mt-2">
+              Kéo thả ảnh vào đây hoặc nhấp để tải lên
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              PNG, JPG, GIF lên đến 5MB (Có thể chọn nhiều ảnh)
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => e.target.files && handleFiles(e.target.files)}
+            />
+          </div>
+
+          {files.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {files.map((f, i) => (
+                <li
+                  key={`${f.name}-${i}`}
+                  className="flex items-center justify-between text-xs bg-neutral-50 border border-gray-200 rounded px-2 py-1"
+                >
+                  <span className="truncate text-neutral-700">{f.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => setFiles((prev) => prev.filter((_, idx) => idx !== i))}
+                    className="text-neutral-400 hover:text-red-500"
+                    aria-label="Remove"
+                  >
+                    <XIcon className="h-3.5 w-3.5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
