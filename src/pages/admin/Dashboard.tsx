@@ -279,9 +279,20 @@ export default function AdminDashboard() {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right">
-                              <Button variant="ghost" size="sm" className="text-neutral-700">
-                                Xem
-                              </Button>
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  className="p-2 rounded-md border border-red-200 text-red-400 hover:bg-red-50 transition-colors"
+                                  aria-label="Print"
+                                >
+                                  <Printer className="h-4 w-4" />
+                                </button>
+                                <button
+                                  className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+                                  aria-label="Delete"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         );
