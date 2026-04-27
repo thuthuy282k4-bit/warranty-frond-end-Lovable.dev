@@ -370,12 +370,55 @@ export default function AdminDashboard() {
               </TabsContent>
 
               <TabsContent value="products" className="mt-6">
-                <div className="flex items-center justify-between mb-5">
-                  <h3 className="text-lg font-semibold text-neutral-900">Kho sản phẩm</h3>
-                  <Button className="bg-black text-white hover:bg-neutral-800">
-                    <Plus className="h-4 w-4" />
-                    Thêm
-                  </Button>
+                <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-neutral-900">Kho sản phẩm</h3>
+                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600">
+                      {filteredProducts.length}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 flex-1 justify-end min-w-[280px]">
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                      <Input
+                        value={productSearch}
+                        onChange={(e) => setProductSearch(e.target.value)}
+                        placeholder="Tìm theo mã, tên SP, khách hàng..."
+                        className="pl-9 bg-neutral-50 border-gray-200"
+                      />
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="border-gray-300">
+                          <Filter className="h-4 w-4" />
+                          Bộ lọc
+                          {productCategoryFilter.length > 0 && (
+                            <span className="ml-1 text-xs font-medium px-1.5 py-0.5 rounded-full bg-neutral-900 text-white">
+                              {productCategoryFilter.length}
+                            </span>
+                          )}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuLabel>Lọc theo danh mục</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {PRODUCT_CATEGORIES.map((cat) => (
+                          <DropdownMenuCheckboxItem
+                            key={cat}
+                            checked={productCategoryFilter.includes(cat)}
+                            onCheckedChange={() => toggleCategory(cat)}
+                            onSelect={(e) => e.preventDefault()}
+                          >
+                            {cat}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button className="bg-black text-white hover:bg-neutral-800">
+                      <Plus className="h-4 w-4" />
+                      Thêm
+                    </Button>
+                  </div>
                 </div>
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <Table>
@@ -384,12 +427,13 @@ export default function AdminDashboard() {
                         <TableHead>Ảnh</TableHead>
                         <TableHead>Mã SP</TableHead>
                         <TableHead>Tên sản phẩm</TableHead>
+                        <TableHead>Danh mục</TableHead>
                         <TableHead>Khách hàng</TableHead>
                         <TableHead className="text-right">Thao tác</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {products.map((p) => (
+                      {filteredProducts.map((p) => (
                         <TableRow key={p.code}>
                           <TableCell>
                             <div className="w-10 h-10 rounded-md bg-neutral-100 flex items-center justify-center text-neutral-400">
@@ -405,6 +449,7 @@ export default function AdminDashboard() {
                           </TableCell>
                           <TableCell className="font-medium text-neutral-900">{p.code}</TableCell>
                           <TableCell className="text-neutral-700">{p.name}</TableCell>
+                          <TableCell className="text-neutral-600">{p.category}</TableCell>
                           <TableCell className="text-neutral-600">{p.customer}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-2">
@@ -430,6 +475,13 @@ export default function AdminDashboard() {
                           </TableCell>
                         </TableRow>
                       ))}
+                      {filteredProducts.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
+                            Không tìm thấy sản phẩm phù hợp.
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 </div>
