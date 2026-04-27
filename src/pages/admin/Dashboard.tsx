@@ -148,6 +148,8 @@ const StatCard = ({
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [productSearch, setProductSearch] = useState("");
+  const [productCategoryFilter, setProductCategoryFilter] = useState<string[]>([]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -161,6 +163,26 @@ export default function AdminDashboard() {
         r.technician.toLowerCase().includes(q),
     );
   }, [search]);
+
+  const filteredProducts = useMemo(() => {
+    const q = productSearch.trim().toLowerCase();
+    return products.filter((p) => {
+      const matchesSearch =
+        !q ||
+        p.code.toLowerCase().includes(q) ||
+        p.name.toLowerCase().includes(q) ||
+        p.customer.toLowerCase().includes(q);
+      const matchesCategory =
+        productCategoryFilter.length === 0 || productCategoryFilter.includes(p.category);
+      return matchesSearch && matchesCategory;
+    });
+  }, [productSearch, productCategoryFilter]);
+
+  const toggleCategory = (cat: string) => {
+    setProductCategoryFilter((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
+    );
+  };
 
   return (
     <div className="h-screen flex flex-row bg-[#F9FAFB]">
