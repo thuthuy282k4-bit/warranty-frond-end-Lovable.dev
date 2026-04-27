@@ -82,15 +82,18 @@ type Product = {
   code: string;
   name: string;
   customer: string;
+  category: string;
   hasImage: boolean;
 };
 
+const PRODUCT_CATEGORIES = ["Laptop", "PC", "Accessories", "An Ninh Giám Sát"] as const;
+
 const products: Product[] = [
-  { code: "LAP-2023-002", name: "MacBook Pro M2 14-inch", customer: "Tran Thi Khach", hasImage: true },
-  { code: "ACC-2023-001", name: "Logitech MX Master 3S", customer: "Tran Thi Khach", hasImage: true },
-  { code: "SN123", name: "Laptop", customer: "Tran Thi Khach", hasImage: false },
-  { code: "SN1", name: "SPI", customer: "Tran Thi Khach", hasImage: false },
-  { code: "S/N: AX-P3245-2026-001", name: "Camera IP Dome AXIS P3245-V", customer: "Tran Thi Khach", hasImage: true },
+  { code: "LAP-2023-002", name: "MacBook Pro M2 14-inch", customer: "Tran Thi Khach", category: "Laptop", hasImage: true },
+  { code: "ACC-2023-001", name: "Logitech MX Master 3S", customer: "Tran Thi Khach", category: "Accessories", hasImage: true },
+  { code: "SN123", name: "Laptop", customer: "Tran Thi Khach", category: "Laptop", hasImage: false },
+  { code: "SN1", name: "SPI", customer: "Tran Thi Khach", category: "PC", hasImage: false },
+  { code: "S/N: AX-P3245-2026-001", name: "Camera IP Dome AXIS P3245-V", customer: "Tran Thi Khach", category: "An Ninh Giám Sát", hasImage: true },
 ];
 
 type Category = {
