@@ -1,7 +1,26 @@
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = email.trim().toLowerCase();
+    if (value === "admin@anhsang.vn") {
+      navigate("/admin/dashboard");
+    } else if (value === "tech@anhsang.vn") {
+      navigate("/tech/workspace");
+    } else if (value === "customer@gmail.com") {
+      navigate("/customer/portal");
+    } else {
+      toast.error("Email hoặc mật khẩu không chính xác. Vui lòng thử lại.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-12">
       <div className="w-full max-w-md">
@@ -26,13 +45,15 @@ const Login = () => {
             Hệ thống quản lý bảo hành và hỗ trợ kỹ thuật
           </p>
 
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleSubmit}>
             <label htmlFor="email" className="text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
             <input
               id="email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="example@anhsang.vn"
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-neutral-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
             />
