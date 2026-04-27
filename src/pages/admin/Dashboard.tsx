@@ -337,14 +337,114 @@ export default function AdminDashboard() {
               </TabsContent>
 
               <TabsContent value="products" className="mt-6">
-                <p className="text-sm text-neutral-500 py-8 text-center">
-                  Danh sách sản phẩm sẽ hiển thị tại đây.
-                </p>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-lg font-semibold text-neutral-900">Kho sản phẩm</h3>
+                  <Button className="bg-black text-white hover:bg-neutral-800">
+                    <Plus className="h-4 w-4" />
+                    Thêm
+                  </Button>
+                </div>
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-neutral-50 hover:bg-neutral-50">
+                        <TableHead>Ảnh</TableHead>
+                        <TableHead>Mã SP</TableHead>
+                        <TableHead>Tên sản phẩm</TableHead>
+                        <TableHead>Khách hàng</TableHead>
+                        <TableHead className="text-right">Thao tác</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {products.map((p) => (
+                        <TableRow key={p.code}>
+                          <TableCell>
+                            <div className="w-10 h-10 rounded-md bg-neutral-100 flex items-center justify-center text-neutral-400">
+                              {p.hasImage ? (
+                                <Laptop className="h-5 w-5 text-neutral-500" />
+                              ) : (
+                                <div className="flex flex-col items-center justify-center">
+                                  <ImageOff className="h-3.5 w-3.5" />
+                                  <span className="text-[9px] leading-none mt-0.5">No pic</span>
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-medium text-neutral-900">{p.code}</TableCell>
+                          <TableCell className="text-neutral-700">{p.name}</TableCell>
+                          <TableCell className="text-neutral-600">{p.customer}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                className="p-2 rounded-md border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition-colors"
+                                aria-label="Edit"
+                              >
+                                <Edit3 className="h-4 w-4" />
+                              </button>
+                              <button
+                                className="p-2 rounded-md border border-red-200 text-red-400 hover:bg-red-50 transition-colors"
+                                aria-label="Print"
+                              >
+                                <Printer className="h-4 w-4" />
+                              </button>
+                              <button
+                                className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+                                aria-label="Delete"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </TabsContent>
+
               <TabsContent value="categories" className="mt-6">
-                <p className="text-sm text-neutral-500 py-8 text-center">
-                  Danh mục sẽ hiển thị tại đây.
-                </p>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-lg font-semibold text-neutral-900">Danh mục sản phẩm</h3>
+                  <Button className="bg-black text-white hover:bg-neutral-800">
+                    <Plus className="h-4 w-4" />
+                    Thêm
+                  </Button>
+                </div>
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-neutral-50 hover:bg-neutral-50">
+                        <TableHead>Tên danh mục</TableHead>
+                        <TableHead>Mô tả</TableHead>
+                        <TableHead className="text-right">Thao tác</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {categories.map((c) => (
+                        <TableRow key={c.name}>
+                          <TableCell className="font-medium text-neutral-900">{c.name}</TableCell>
+                          <TableCell className="text-neutral-600">{c.description}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                className="p-2 rounded-md border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition-colors"
+                                aria-label="Edit"
+                              >
+                                <Edit3 className="h-4 w-4" />
+                              </button>
+                              <button
+                                className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+                                aria-label="Delete"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
