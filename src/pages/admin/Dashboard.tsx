@@ -242,7 +242,7 @@ export default function AdminDashboard() {
           <div className="flex items-start justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-neutral-900">Chào System Admin,</h1>
-              <p className="text-neutral-500 mt-1">Quản lý hệ thống bảo hành Ánh Sáng.</p>
+              <p className="text-neutral-500 mt-1">Quản lý hệ thống bảo hành WarrantyHub.</p>
             </div>
             <div className="flex items-center gap-3">
               <Button variant="outline" className="border-gray-300">
