@@ -504,7 +504,10 @@ export default function AdminDashboard() {
               <TabsContent value="categories" className="mt-6">
                 <div className="flex items-center justify-between mb-5">
                   <h3 className="text-lg font-semibold text-neutral-900">Danh mục sản phẩm</h3>
-                  <Button className="bg-black text-white hover:bg-neutral-800">
+                  <Button
+                    className="bg-black text-white hover:bg-neutral-800"
+                    onClick={() => setAddCategoryOpen(true)}
+                  >
                     <Plus className="h-4 w-4" />
                     Thêm
                   </Button>
