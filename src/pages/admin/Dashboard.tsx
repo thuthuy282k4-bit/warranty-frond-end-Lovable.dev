@@ -522,6 +522,12 @@ export default function AdminDashboard() {
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-2">
                               <button
+                                onClick={() => setEditProduct({
+                                  code: p.code,
+                                  name: p.name,
+                                  category: p.category,
+                                  customer: p.customer,
+                                })}
                                 className="p-2 rounded-md border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition-colors"
                                 aria-label="Edit"
                               >
