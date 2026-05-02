@@ -789,6 +789,13 @@ export default function AdminDashboard() {
         onOpenChange={(v) => !v && setDeleteTarget(null)}
         itemLabel={deleteTarget ?? undefined}
       />
+      <EditProductModal
+        open={!!editProduct}
+        onOpenChange={(v) => !v && setEditProduct(null)}
+        product={editProduct}
+        categories={[...PRODUCT_CATEGORIES]}
+      />
+      <AddMemberModal open={addMemberOpen} onOpenChange={setAddMemberOpen} />
     </div>
   );
 }
