@@ -12,7 +12,7 @@ const Login = () => {
     const value = email.trim().toLowerCase();
     if (value === "admin@anhsang.vn") {
       navigate("/admin/dashboard");
-    } else if (value === "tech@anhsang.vn") {
+    } else if (value === "tech@anhsang.vn" || value === "tech1@anhsang.vn") {
       navigate("/tech/workspace");
     } else if (value === "customer@gmail.com") {
       navigate("/customer/portal");
