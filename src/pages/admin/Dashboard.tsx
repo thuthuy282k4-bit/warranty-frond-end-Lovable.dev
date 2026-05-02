@@ -38,6 +38,8 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { AddProductModal } from "@/components/admin/AddProductModal";
+import { AddCategoryModal } from "@/components/admin/AddCategoryModal";
+import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
 
 type Request = {
   id: string;
