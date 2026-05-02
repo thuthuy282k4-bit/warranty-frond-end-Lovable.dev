@@ -26,6 +26,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { UpdateStatusModal, type UpdateStatusValue } from "@/components/tech/UpdateStatusModal";
+import { PrintReceiptModal, type WarrantyReceiptData } from "@/components/shared/PrintReceiptModal";
 
 type Status = "pending" | "processing" | "completed";
 
