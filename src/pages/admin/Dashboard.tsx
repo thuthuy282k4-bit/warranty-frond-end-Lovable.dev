@@ -192,10 +192,10 @@ export default function AdminDashboard() {
       <aside className="w-[260px] flex-shrink-0 bg-white border-r border-gray-200 flex flex-col">
         <div className="px-6 py-5 border-b border-gray-200">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-black rounded flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-lg">
               W
             </div>
-            <span className="font-bold text-neutral-900">Ánh Sáng Warranty</span>
+            <span className="font-bold text-neutral-900">WarrantyHub</span>
           </div>
         </div>
 
