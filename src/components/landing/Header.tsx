@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const Logo = ({ name = "Ánh Sáng Warranty" }: { name?: string }) => (
+const Logo = ({ name = "WarrantyHub" }: { name?: string }) => (
   <div className="flex items-center gap-2.5">
-    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground text-background font-bold text-lg">
+    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white font-bold text-lg">
       W
     </div>
     <span className="font-bold text-foreground tracking-tight">{name}</span>
