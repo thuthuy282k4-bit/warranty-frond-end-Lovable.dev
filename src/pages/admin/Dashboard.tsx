@@ -255,19 +255,21 @@ export default function AdminDashboard() {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map((item) => (
-            <button
-              key={item.label}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                item.active
-                  ? "bg-neutral-900 text-white"
-                  : "text-neutral-600 hover:bg-neutral-100"
-              }`}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const active = activeNav === item.key;
+            return (
+              <button
+                key={item.key}
+                onClick={() => setActiveNav(item.key)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  active ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100"
+                }`}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
 
         <div className="p-4 border-t border-gray-200">
