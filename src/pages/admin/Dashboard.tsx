@@ -199,6 +199,7 @@ export default function AdminDashboard() {
   const [memberSearch, setMemberSearch] = useState("");
   const [memberRoleFilter, setMemberRoleFilter] = useState<string>("all");
   const [addMemberOpen, setAddMemberOpen] = useState(false);
+  const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
 
   const filteredMembers = useMemo(() => {
     const q = memberSearch.trim().toLowerCase();
@@ -406,6 +407,19 @@ export default function AdminDashboard() {
                             <TableCell className="text-right">
                               <div className="flex items-center justify-end gap-2">
                                 <button
+                                  onClick={() =>
+                                    setPrintTarget({
+                                      type: "receipt",
+                                      refId: r.id.replace("#", ""),
+                                      customerName: r.customer,
+                                      customerPhone: "0909 000 111",
+                                      productName: r.product,
+                                      productModel: r.product,
+                                      serial: `SN-${r.id.replace(/\D/g, "")}`,
+                                      expiry: "20/05/2027",
+                                      isValid: true,
+                                    })
+                                  }
                                   className="p-2 rounded-md border border-red-200 text-red-400 hover:bg-red-50 transition-colors"
                                   aria-label="Print"
                                 >
@@ -535,6 +549,19 @@ export default function AdminDashboard() {
                                 <Edit3 className="h-4 w-4" />
                               </button>
                               <button
+                                onClick={() =>
+                                  setPrintTarget({
+                                    type: "warranty",
+                                    refId: p.code,
+                                    customerName: p.customer,
+                                    customerPhone: "0909 000 222",
+                                    productName: p.name,
+                                    productModel: p.name,
+                                    serial: `SN-${p.code}`,
+                                    expiry: "20/05/2027",
+                                    isValid: true,
+                                  })
+                                }
                                 className="p-2 rounded-md border border-red-200 text-red-400 hover:bg-red-50 transition-colors"
                                 aria-label="Print"
                               >
@@ -797,6 +824,11 @@ export default function AdminDashboard() {
         categories={[...PRODUCT_CATEGORIES]}
       />
       <AddMemberModal open={addMemberOpen} onOpenChange={setAddMemberOpen} />
+      <PrintReceiptModal
+        open={!!printTarget}
+        onOpenChange={(v) => !v && setPrintTarget(null)}
+        data={printTarget}
+      />
     </div>
   );
 }
