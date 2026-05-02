@@ -447,6 +447,11 @@ const TechWorkspace = () => {
         requestId={updateTarget ?? undefined}
         onSubmit={handleUpdate}
       />
+      <PrintReceiptModal
+        open={!!printTarget}
+        onOpenChange={(v) => !v && setPrintTarget(null)}
+        data={printTarget}
+      />
     </div>
   );
 };
