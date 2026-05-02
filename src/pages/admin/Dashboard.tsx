@@ -15,6 +15,9 @@ import {
   Trash2,
   Edit3,
   ImageOff,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,9 +40,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AddProductModal } from "@/components/admin/AddProductModal";
 import { AddCategoryModal } from "@/components/admin/AddCategoryModal";
 import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
+import { EditProductModal, type EditProductData } from "@/components/admin/EditProductModal";
+import { AddMemberModal } from "@/components/admin/AddMemberModal";
 
 type Request = {
   id: string;
@@ -117,11 +129,36 @@ const statusConfig = {
   pending: { label: "Chờ xử lý", className: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100" },
 };
 
-const navItems = [
-  { label: "Bảng điều khiển", icon: LayoutDashboard, active: true },
-  { label: "Thành viên", icon: Users, active: false },
-  { label: "Báo cáo", icon: FileBarChart, active: false },
+type NavKey = "dashboard" | "members" | "reports";
+
+const navItems: { key: NavKey; label: string; icon: typeof LayoutDashboard }[] = [
+  { key: "dashboard", label: "Bảng điều khiển", icon: LayoutDashboard },
+  { key: "members", label: "Thành viên", icon: Users },
+  { key: "reports", label: "Báo cáo", icon: FileBarChart },
 ];
+
+type Member = {
+  id: string;
+  name: string;
+  email: string;
+  role: "CUSTOMER" | "ADMIN" | "TECHNICIAN";
+  status: "active";
+  createdAt: string;
+};
+
+const members: Member[] = [
+  { id: "u1", name: "Trần Thị Khách", email: "khach@example.com", role: "CUSTOMER", status: "active", createdAt: "2024-12-10" },
+  { id: "u2", name: "System Admin", email: "admin@anhsang.vn", role: "ADMIN", status: "active", createdAt: "2024-01-05" },
+  { id: "u3", name: "Nguyễn Văn Tech", email: "tech@anhsang.vn", role: "TECHNICIAN", status: "active", createdAt: "2024-03-22" },
+  { id: "u4", name: "Lê Thị B", email: "leb@example.com", role: "CUSTOMER", status: "active", createdAt: "2025-02-14" },
+  { id: "u5", name: "Phạm Văn Kỹ", email: "phamky@anhsang.vn", role: "TECHNICIAN", status: "active", createdAt: "2025-04-01" },
+];
+
+const roleBadge: Record<Member["role"], string> = {
+  CUSTOMER: "bg-blue-100 text-blue-700 hover:bg-blue-100",
+  ADMIN: "bg-purple-100 text-purple-700 hover:bg-purple-100",
+  TECHNICIAN: "bg-amber-100 text-amber-700 hover:bg-amber-100",
+};
 
 const StatCard = ({
   title,
@@ -150,12 +187,26 @@ const StatCard = ({
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const [activeNav, setActiveNav] = useState<NavKey>("dashboard");
   const [search, setSearch] = useState("");
   const [productSearch, setProductSearch] = useState("");
   const [productCategoryFilter, setProductCategoryFilter] = useState<string[]>([]);
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [addCategoryOpen, setAddCategoryOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [editProduct, setEditProduct] = useState<EditProductData | null>(null);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [memberRoleFilter, setMemberRoleFilter] = useState<string>("all");
+  const [addMemberOpen, setAddMemberOpen] = useState(false);
+
+  const filteredMembers = useMemo(() => {
+    const q = memberSearch.trim().toLowerCase();
+    return members.filter((m) => {
+      const matchSearch = !q || m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q);
+      const matchRole = memberRoleFilter === "all" || m.role === memberRoleFilter;
+      return matchSearch && matchRole;
+    });
+  }, [memberSearch, memberRoleFilter]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -204,19 +255,21 @@ export default function AdminDashboard() {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map((item) => (
-            <button
-              key={item.label}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                item.active
-                  ? "bg-neutral-900 text-white"
-                  : "text-neutral-600 hover:bg-neutral-100"
-              }`}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const active = activeNav === item.key;
+            return (
+              <button
+                key={item.key}
+                onClick={() => setActiveNav(item.key)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  active ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100"
+                }`}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
 
         <div className="p-4 border-t border-gray-200">
@@ -242,6 +295,8 @@ export default function AdminDashboard() {
       {/* Main */}
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto px-8 py-8">
+          {activeNav === "dashboard" && (
+          <>
           {/* Header */}
           <div className="flex items-start justify-between mb-8">
             <div>
@@ -467,6 +522,12 @@ export default function AdminDashboard() {
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-2">
                               <button
+                                onClick={() => setEditProduct({
+                                  code: p.code,
+                                  name: p.name,
+                                  category: p.category,
+                                  customer: p.customer,
+                                })}
                                 className="p-2 rounded-md border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition-colors"
                                 aria-label="Edit"
                               >
@@ -551,6 +612,168 @@ export default function AdminDashboard() {
               </TabsContent>
             </Tabs>
           </div>
+          </>
+          )}
+
+          {activeNav === "members" && (
+            <>
+              <div className="flex items-start justify-between mb-8">
+                <div>
+                  <h1 className="text-3xl font-bold text-neutral-900">Quản lý thành viên</h1>
+                  <p className="text-neutral-500 mt-1">
+                    Quản lý tài khoản khách hàng, kỹ thuật viên và quản trị viên.
+                  </p>
+                </div>
+                <Button
+                  className="bg-black text-white hover:bg-neutral-800"
+                  onClick={() => setAddMemberOpen(true)}
+                >
+                  <Plus className="h-4 w-4" />
+                  Thêm thành viên
+                </Button>
+              </div>
+
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div className="flex items-center gap-3 mb-5 flex-wrap">
+                  <div className="relative flex-1 min-w-[240px]">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                    <Input
+                      value={memberSearch}
+                      onChange={(e) => setMemberSearch(e.target.value)}
+                      placeholder="Tìm theo tên, email..."
+                      className="pl-9 bg-neutral-50 border-gray-200"
+                    />
+                  </div>
+                  <Select value={memberRoleFilter} onValueChange={setMemberRoleFilter}>
+                    <SelectTrigger className="w-[200px] border-gray-300">
+                      <SelectValue placeholder="Tất cả vai trò" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tất cả vai trò</SelectItem>
+                      <SelectItem value="CUSTOMER">CUSTOMER</SelectItem>
+                      <SelectItem value="ADMIN">ADMIN</SelectItem>
+                      <SelectItem value="TECHNICIAN">TECHNICIAN</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-neutral-50 hover:bg-neutral-50">
+                        <TableHead>Họ tên</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Vai trò</TableHead>
+                        <TableHead>Trạng thái</TableHead>
+                        <TableHead>Ngày tạo</TableHead>
+                        <TableHead className="text-right">Thao tác</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredMembers.map((m) => (
+                        <TableRow key={m.id}>
+                          <TableCell className="font-medium text-neutral-900">{m.name}</TableCell>
+                          <TableCell className="text-neutral-700">{m.email}</TableCell>
+                          <TableCell>
+                            <Badge className={`rounded-full font-medium ${roleBadge[m.role]}`}>
+                              {m.role}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className="rounded-full font-medium bg-green-100 text-green-700 hover:bg-green-100">
+                              Hoạt động
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-neutral-600">{m.createdAt}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                className="p-2 rounded-md border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition-colors"
+                                aria-label="Edit"
+                              >
+                                <Edit3 className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => setDeleteTarget(`thành viên ${m.name}`)}
+                                className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+                                aria-label="Delete"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {filteredMembers.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
+                            Không tìm thấy thành viên phù hợp.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeNav === "reports" && (
+            <>
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-neutral-900">Báo cáo</h1>
+                <p className="text-neutral-500 mt-1">
+                  Tổng quan hiệu suất xử lý bảo hành.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <StatCard title="Tổng yêu cầu" value="6" badgeText="+12% so với tháng trước" badgeClass="bg-blue-100 text-blue-700" />
+                <StatCard title="Hoàn thành" value="2" badgeText="33.3%" badgeClass="bg-green-100 text-green-700" />
+                <StatCard title="Đang xử lý" value="3" badgeText="50%" badgeClass="bg-orange-100 text-orange-700" />
+                <StatCard title="Chờ xử lý" value="1" badgeText="16.7%" badgeClass="bg-yellow-100 text-yellow-700" />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <TrendingUp className="h-5 w-5 text-neutral-700" />
+                    <h3 className="text-lg font-semibold text-neutral-900">Tỷ lệ giải quyết</h3>
+                  </div>
+                  <p className="text-4xl font-bold text-neutral-900">33.3%</p>
+                  <Progress value={33.3} className="h-2 mt-4" />
+                  <p className="text-sm text-neutral-500 mt-3">2 / 6 yêu cầu đã được giải quyết.</p>
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Clock className="h-5 w-5 text-neutral-700" />
+                    <h3 className="text-lg font-semibold text-neutral-900">Thời gian xử lý trung bình</h3>
+                  </div>
+                  <p className="text-4xl font-bold text-neutral-900">2.4 ngày</p>
+                  <p className="text-sm text-neutral-500 mt-3">Giảm 0.6 ngày so với tháng trước.</p>
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:col-span-2">
+                  <div className="flex items-center gap-2 mb-4">
+                    <CheckCircle2 className="h-5 w-5 text-neutral-700" />
+                    <h3 className="text-lg font-semibold text-neutral-900">Hiệu suất kỹ thuật viên</h3>
+                  </div>
+                  <div className="space-y-4">
+                    {[
+                      { name: "Nguyễn Văn Tech", value: 85 },
+                      { name: "Phạm Văn Kỹ", value: 67 },
+                      { name: "Chưa phân công", value: 20 },
+                    ].map((t) => (
+                      <div key={t.name}>
+                        <div className="flex justify-between text-sm mb-1.5">
+                          <span className="text-neutral-700 font-medium">{t.name}</span>
+                          <span className="text-neutral-500">{t.value}%</span>
+                        </div>
+                        <Progress value={t.value} className="h-2" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </main>
 
@@ -566,6 +789,13 @@ export default function AdminDashboard() {
         onOpenChange={(v) => !v && setDeleteTarget(null)}
         itemLabel={deleteTarget ?? undefined}
       />
+      <EditProductModal
+        open={!!editProduct}
+        onOpenChange={(v) => !v && setEditProduct(null)}
+        product={editProduct}
+        categories={[...PRODUCT_CATEGORIES]}
+      />
+      <AddMemberModal open={addMemberOpen} onOpenChange={setAddMemberOpen} />
     </div>
   );
 }
