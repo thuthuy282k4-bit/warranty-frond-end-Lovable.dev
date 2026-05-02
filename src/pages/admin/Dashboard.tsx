@@ -38,6 +38,8 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { AddProductModal } from "@/components/admin/AddProductModal";
+import { AddCategoryModal } from "@/components/admin/AddCategoryModal";
+import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
 
 type Request = {
   id: string;
@@ -152,6 +154,8 @@ export default function AdminDashboard() {
   const [productSearch, setProductSearch] = useState("");
   const [productCategoryFilter, setProductCategoryFilter] = useState<string[]>([]);
   const [addProductOpen, setAddProductOpen] = useState(false);
+  const [addCategoryOpen, setAddCategoryOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -192,10 +196,10 @@ export default function AdminDashboard() {
       <aside className="w-[260px] flex-shrink-0 bg-white border-r border-gray-200 flex flex-col">
         <div className="px-6 py-5 border-b border-gray-200">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-black rounded flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-lg">
               W
             </div>
-            <span className="font-bold text-neutral-900">Ánh Sáng Warranty</span>
+            <span className="font-bold text-neutral-900">WarrantyHub</span>
           </div>
         </div>
 
@@ -242,7 +246,7 @@ export default function AdminDashboard() {
           <div className="flex items-start justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-neutral-900">Chào System Admin,</h1>
-              <p className="text-neutral-500 mt-1">Quản lý hệ thống bảo hành Ánh Sáng.</p>
+              <p className="text-neutral-500 mt-1">Quản lý hệ thống bảo hành WarrantyHub.</p>
             </div>
             <div className="flex items-center gap-3">
               <Button variant="outline" className="border-gray-300">
@@ -352,6 +356,7 @@ export default function AdminDashboard() {
                                   <Printer className="h-4 w-4" />
                                 </button>
                                 <button
+                                  onClick={() => setDeleteTarget(`yêu cầu ${r.id}`)}
                                   className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
                                   aria-label="Delete"
                                 >
@@ -474,6 +479,7 @@ export default function AdminDashboard() {
                                 <Printer className="h-4 w-4" />
                               </button>
                               <button
+                                onClick={() => setDeleteTarget(`sản phẩm ${p.code}`)}
                                 className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
                                 aria-label="Delete"
                               >
@@ -498,7 +504,10 @@ export default function AdminDashboard() {
               <TabsContent value="categories" className="mt-6">
                 <div className="flex items-center justify-between mb-5">
                   <h3 className="text-lg font-semibold text-neutral-900">Danh mục sản phẩm</h3>
-                  <Button className="bg-black text-white hover:bg-neutral-800">
+                  <Button
+                    className="bg-black text-white hover:bg-neutral-800"
+                    onClick={() => setAddCategoryOpen(true)}
+                  >
                     <Plus className="h-4 w-4" />
                     Thêm
                   </Button>
@@ -526,6 +535,7 @@ export default function AdminDashboard() {
                                 <Edit3 className="h-4 w-4" />
                               </button>
                               <button
+                                onClick={() => setDeleteTarget(`danh mục "${c.name}"`)}
                                 className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
                                 aria-label="Delete"
                               >
@@ -549,6 +559,12 @@ export default function AdminDashboard() {
         onOpenChange={setAddProductOpen}
         existingCodes={products.map((p) => p.code)}
         categories={[...PRODUCT_CATEGORIES]}
+      />
+      <AddCategoryModal open={addCategoryOpen} onOpenChange={setAddCategoryOpen} />
+      <ConfirmDeleteModal
+        open={!!deleteTarget}
+        onOpenChange={(v) => !v && setDeleteTarget(null)}
+        itemLabel={deleteTarget ?? undefined}
       />
     </div>
   );
