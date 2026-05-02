@@ -132,6 +132,7 @@ const TechWorkspace = () => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [activeTab, setActiveTab] = useState<Status>("pending");
   const [updateTarget, setUpdateTarget] = useState<string | null>(null);
+  const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
 
   const counts = useMemo(
     () => ({
@@ -411,7 +412,19 @@ const TechWorkspace = () => {
                           <TableCell className="text-gray-600">{t.completedAt}</TableCell>
                           <TableCell className="text-right">
                             <button
-                              onClick={() => toast.success(`In phiếu ${t.id}`)}
+                              onClick={() =>
+                                setPrintTarget({
+                                  type: "receipt",
+                                  refId: t.id,
+                                  customerName: t.customer,
+                                  customerPhone: "0909 000 333",
+                                  productName: t.product,
+                                  productModel: t.product,
+                                  serial: `SN-${t.id.replace(/\D/g, "")}`,
+                                  expiry: "20/05/2027",
+                                  isValid: true,
+                                })
+                              }
                               className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition"
                             >
                               <Printer className="h-4 w-4" />
