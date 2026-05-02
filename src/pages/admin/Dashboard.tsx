@@ -15,6 +15,9 @@ import {
   Trash2,
   Edit3,
   ImageOff,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,9 +40,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AddProductModal } from "@/components/admin/AddProductModal";
 import { AddCategoryModal } from "@/components/admin/AddCategoryModal";
 import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
+import { EditProductModal, type EditProductData } from "@/components/admin/EditProductModal";
+import { AddMemberModal } from "@/components/admin/AddMemberModal";
 
 type Request = {
   id: string;
@@ -117,11 +129,36 @@ const statusConfig = {
   pending: { label: "Chờ xử lý", className: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100" },
 };
 
-const navItems = [
-  { label: "Bảng điều khiển", icon: LayoutDashboard, active: true },
-  { label: "Thành viên", icon: Users, active: false },
-  { label: "Báo cáo", icon: FileBarChart, active: false },
+type NavKey = "dashboard" | "members" | "reports";
+
+const navItems: { key: NavKey; label: string; icon: typeof LayoutDashboard }[] = [
+  { key: "dashboard", label: "Bảng điều khiển", icon: LayoutDashboard },
+  { key: "members", label: "Thành viên", icon: Users },
+  { key: "reports", label: "Báo cáo", icon: FileBarChart },
 ];
+
+type Member = {
+  id: string;
+  name: string;
+  email: string;
+  role: "CUSTOMER" | "ADMIN" | "TECHNICIAN";
+  status: "active";
+  createdAt: string;
+};
+
+const members: Member[] = [
+  { id: "u1", name: "Trần Thị Khách", email: "khach@example.com", role: "CUSTOMER", status: "active", createdAt: "2024-12-10" },
+  { id: "u2", name: "System Admin", email: "admin@anhsang.vn", role: "ADMIN", status: "active", createdAt: "2024-01-05" },
+  { id: "u3", name: "Nguyễn Văn Tech", email: "tech@anhsang.vn", role: "TECHNICIAN", status: "active", createdAt: "2024-03-22" },
+  { id: "u4", name: "Lê Thị B", email: "leb@example.com", role: "CUSTOMER", status: "active", createdAt: "2025-02-14" },
+  { id: "u5", name: "Phạm Văn Kỹ", email: "phamky@anhsang.vn", role: "TECHNICIAN", status: "active", createdAt: "2025-04-01" },
+];
+
+const roleBadge: Record<Member["role"], string> = {
+  CUSTOMER: "bg-blue-100 text-blue-700 hover:bg-blue-100",
+  ADMIN: "bg-purple-100 text-purple-700 hover:bg-purple-100",
+  TECHNICIAN: "bg-amber-100 text-amber-700 hover:bg-amber-100",
+};
 
 const StatCard = ({
   title,
@@ -150,12 +187,26 @@ const StatCard = ({
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const [activeNav, setActiveNav] = useState<NavKey>("dashboard");
   const [search, setSearch] = useState("");
   const [productSearch, setProductSearch] = useState("");
   const [productCategoryFilter, setProductCategoryFilter] = useState<string[]>([]);
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [addCategoryOpen, setAddCategoryOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [editProduct, setEditProduct] = useState<EditProductData | null>(null);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [memberRoleFilter, setMemberRoleFilter] = useState<string>("all");
+  const [addMemberOpen, setAddMemberOpen] = useState(false);
+
+  const filteredMembers = useMemo(() => {
+    const q = memberSearch.trim().toLowerCase();
+    return members.filter((m) => {
+      const matchSearch = !q || m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q);
+      const matchRole = memberRoleFilter === "all" || m.role === memberRoleFilter;
+      return matchSearch && matchRole;
+    });
+  }, [memberSearch, memberRoleFilter]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
