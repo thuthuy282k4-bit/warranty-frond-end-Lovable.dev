@@ -356,6 +356,7 @@ export default function AdminDashboard() {
                                   <Printer className="h-4 w-4" />
                                 </button>
                                 <button
+                                  onClick={() => setDeleteTarget(`yêu cầu ${r.id}`)}
                                   className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
                                   aria-label="Delete"
                                 >
