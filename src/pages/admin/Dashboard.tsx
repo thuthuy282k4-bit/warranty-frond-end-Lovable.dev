@@ -560,6 +560,12 @@ export default function AdminDashboard() {
         existingCodes={products.map((p) => p.code)}
         categories={[...PRODUCT_CATEGORIES]}
       />
+      <AddCategoryModal open={addCategoryOpen} onOpenChange={setAddCategoryOpen} />
+      <ConfirmDeleteModal
+        open={!!deleteTarget}
+        onOpenChange={(v) => !v && setDeleteTarget(null)}
+        itemLabel={deleteTarget ?? undefined}
+      />
     </div>
   );
 }
