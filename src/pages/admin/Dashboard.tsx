@@ -535,6 +535,7 @@ export default function AdminDashboard() {
                                 <Edit3 className="h-4 w-4" />
                               </button>
                               <button
+                                onClick={() => setDeleteTarget(`danh mục "${c.name}"`)}
                                 className="p-2 rounded-md border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
                                 aria-label="Delete"
                               >
