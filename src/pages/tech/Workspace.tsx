@@ -497,6 +497,13 @@ const TechWorkspace = () => {
         onOpenChange={(v) => !v && setPrintTarget(null)}
         data={printTarget}
       />
+      <RequestDetailModal
+        open={!!detailTarget}
+        onOpenChange={(v) => !v && setDetailTarget(null)}
+        request={detailTarget}
+        showAccept
+        onAccept={(id) => accept(id)}
+      />
     </div>
   );
 };
