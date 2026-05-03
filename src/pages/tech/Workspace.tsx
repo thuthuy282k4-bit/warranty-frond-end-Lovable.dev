@@ -336,14 +336,30 @@ const TechWorkspace = () => {
                           </TableCell>
                           <TableCell className="text-gray-600">{t.createdAt}</TableCell>
                           <TableCell className="text-right">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => accept(t.id)}
-                              className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
-                            >
-                              Tiếp nhận
-                            </Button>
+                            <TooltipProvider delayDuration={150}>
+                              <div className="flex items-center justify-end gap-2">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() => setDetailTarget(buildDetail(t))}
+                                      className="inline-flex items-center justify-center h-9 w-9 rounded-md border border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition"
+                                      aria-label="Xem chi tiết"
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Xem chi tiết</TooltipContent>
+                                </Tooltip>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => accept(t.id)}
+                                  className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                >
+                                  Tiếp nhận
+                                </Button>
+                              </div>
+                            </TooltipProvider>
                           </TableCell>
                         </TableRow>
                       ))
