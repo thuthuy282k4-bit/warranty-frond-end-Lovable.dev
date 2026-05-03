@@ -207,6 +207,20 @@ export default function AdminDashboard() {
   const [memberRoleFilter, setMemberRoleFilter] = useState<string>("all");
   const [addMemberOpen, setAddMemberOpen] = useState(false);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
+  const [requests, setRequests] = useState<Request[]>(initialRequests);
+
+  const assignTechnician = (id: string, tech: string) => {
+    setRequests((prev) =>
+      prev.map((r) =>
+        r.id === id
+          ? { ...r, technician: tech, status: r.status === "pending" && tech !== "Chưa phân công" ? "processing" : r.status }
+          : r,
+      ),
+    );
+    if (tech !== "Chưa phân công") {
+      toast.success("Đã phân công kỹ thuật viên thành công!");
+    }
+  };
 
   const filteredMembers = useMemo(() => {
     const q = memberSearch.trim().toLowerCase();
