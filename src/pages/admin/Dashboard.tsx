@@ -420,7 +420,23 @@ export default function AdminDashboard() {
                             <TableCell className="text-neutral-700">{r.customer}</TableCell>
                             <TableCell className="text-neutral-700">{r.product}</TableCell>
                             <TableCell className="text-neutral-600">{r.category}</TableCell>
-                            <TableCell className="text-neutral-600">{r.technician}</TableCell>
+                            <TableCell>
+                              <Select
+                                value={r.technician}
+                                onValueChange={(v) => assignTechnician(r.id, v)}
+                              >
+                                <SelectTrigger className="h-9 w-[180px] text-sm border-gray-200 bg-white">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {TECHNICIAN_OPTIONS.map((t) => (
+                                    <SelectItem key={t} value={t}>
+                                      {t}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
                             <TableCell>
                               <Badge className={`rounded-full font-medium ${s.className}`}>
                                 {s.label}
