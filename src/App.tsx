@@ -9,11 +9,13 @@ import AdminDashboard from "./pages/admin/Dashboard.tsx";
 import TechWorkspace from "./pages/tech/Workspace.tsx";
 import CustomerPortal from "./pages/customer/Portal.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { WarrantyProvider } from "./store/warrantyStore.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <WarrantyProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
