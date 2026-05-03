@@ -103,7 +103,7 @@ const categories: Category[] = [
 ];
 
 const statusConfig = {
-  resolved: { label: "Đã giải quyết", className: "bg-green-100 text-green-700 hover:bg-green-100" },
+  completed: { label: "Đã giải quyết", className: "bg-green-100 text-green-700 hover:bg-green-100" },
   processing: { label: "Đang xử lý", className: "bg-blue-100 text-blue-700 hover:bg-blue-100" },
   pending: { label: "Chờ xử lý", className: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100" },
 };
