@@ -136,6 +136,32 @@ const TechWorkspace = () => {
   const [activeTab, setActiveTab] = useState<Status>("pending");
   const [updateTarget, setUpdateTarget] = useState<string | null>(null);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
+  const [detailTarget, setDetailTarget] = useState<WarrantyRequestDetail | null>(null);
+
+  const buildDetail = (t: Task): WarrantyRequestDetail => ({
+    id: t.id,
+    customer: {
+      name: t.customer,
+      phone: "0909 000 333",
+      email: `${t.customer.split(" ").pop()?.toLowerCase()}@gmail.com`,
+      address: "123 Lê Lợi, Quận 1, TP.HCM",
+    },
+    product: {
+      name: t.product,
+      category: t.category,
+      serial: `SN-${t.id.replace(/\D/g, "")}`,
+      warrantyUntil: "20/05/2027",
+    },
+    issue: {
+      type: t.category,
+      description:
+        "Thiết bị không khởi động được sau khi cập nhật firmware. Đèn nguồn nhấp nháy 3 lần rồi tắt. Đã thử rút sạc và khởi động lại nhưng không thành công.",
+      media: [
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70",
+        "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=300&q=70",
+      ],
+    },
+  });
 
   const counts = useMemo(
     () => ({
