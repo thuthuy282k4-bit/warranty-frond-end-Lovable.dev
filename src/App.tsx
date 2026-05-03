@@ -31,6 +31,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </WarrantyProvider>
   </QueryClientProvider>
 );
 
