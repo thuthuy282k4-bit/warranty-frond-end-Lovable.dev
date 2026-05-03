@@ -64,7 +64,14 @@ type Request = {
   status: "resolved" | "processing" | "pending";
 };
 
-const requests: Request[] = [
+const TECHNICIAN_OPTIONS = [
+  "Chưa phân công",
+  "Nguyễn Văn Tech",
+  "Trần Văn Hardware",
+  "Lê Thị Support",
+] as const;
+
+const initialRequests: Request[] = [
   {
     id: "#WR-0001",
     icon: <Laptop className="h-5 w-5 text-neutral-600" />,
