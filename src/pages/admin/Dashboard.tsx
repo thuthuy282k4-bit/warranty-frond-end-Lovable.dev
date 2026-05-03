@@ -212,6 +212,32 @@ export default function AdminDashboard() {
   const [addMemberOpen, setAddMemberOpen] = useState(false);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
   const [requests, setRequests] = useState<Request[]>(initialRequests);
+  const [detailTarget, setDetailTarget] = useState<WarrantyRequestDetail | null>(null);
+
+  const buildDetail = (r: Request): WarrantyRequestDetail => ({
+    id: r.id.replace("#", ""),
+    customer: {
+      name: r.customer,
+      phone: "0909 000 333",
+      email: "khach@gmail.com",
+      address: "123 Lê Lợi, Quận 1, TP.HCM",
+    },
+    product: {
+      name: r.product,
+      category: r.category,
+      serial: `SN-${r.id.replace(/\D/g, "")}`,
+      warrantyUntil: "20/05/2027",
+    },
+    issue: {
+      type: r.category,
+      description:
+        "Thiết bị không khởi động được sau khi cập nhật firmware. Đèn nguồn nhấp nháy 3 lần rồi tắt. Đã thử rút sạc và khởi động lại nhưng không thành công.",
+      media: [
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70",
+        "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=300&q=70",
+      ],
+    },
+  });
 
   const assignTechnician = (id: string, tech: string) => {
     setRequests((prev) =>
