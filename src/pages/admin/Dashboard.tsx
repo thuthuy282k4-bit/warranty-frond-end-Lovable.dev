@@ -332,28 +332,39 @@ export default function AdminDashboard() {
           </div>
 
           {/* Stats */}
+          {(() => null)()}
+          {(() => {
+            return null;
+          })()}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <StatCard
               title="Tổng yêu cầu"
-              value="6"
+              value={String(requests.length)}
               badgeText="Tất cả yêu cầu"
               badgeClass="bg-blue-100 text-blue-700"
             />
             <StatCard
               title="Đang xử lý"
-              value="3"
+              value={String(requests.filter((r) => r.status === "processing").length)}
               badgeText="Đang kiểm tra"
               badgeClass="bg-orange-100 text-orange-700"
             />
             <StatCard
               title="Hoàn thành"
-              value="2"
+              value={String(requests.filter((r) => r.status === "completed").length)}
               badgeText="Đã hoàn tất"
               badgeClass="bg-green-100 text-green-700"
             />
-            <StatCard title="Tỷ lệ giải quyết" value="33.3%">
-              <Progress value={33.3} className="h-2 mt-3" />
-            </StatCard>
+            {(() => {
+              const total = requests.length || 1;
+              const done = requests.filter((r) => r.status === "completed").length;
+              const pct = Math.round((done / total) * 1000) / 10;
+              return (
+                <StatCard title="Tỷ lệ giải quyết" value={`${pct}%`}>
+                  <Progress value={pct} className="h-2 mt-3" />
+                </StatCard>
+              );
+            })()}
           </div>
 
           {/* Table card */}
