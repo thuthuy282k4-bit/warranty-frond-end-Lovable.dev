@@ -473,6 +473,22 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex items-center justify-end gap-2">
+                                {r.status === "pending" && (
+                                  <TooltipProvider delayDuration={150}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <button
+                                          onClick={() => setDetailTarget(buildDetail(r))}
+                                          className="p-2 rounded-md border border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                                          aria-label="Xem chi tiết"
+                                        >
+                                          <Eye className="h-4 w-4" />
+                                        </button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>Xem chi tiết</TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
                                 <button
                                   onClick={() =>
                                     setPrintTarget({
