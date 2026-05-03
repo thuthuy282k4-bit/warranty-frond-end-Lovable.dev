@@ -18,7 +18,10 @@ import {
   TrendingUp,
   CheckCircle2,
   Clock,
+  Eye,
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { RequestDetailModal, type WarrantyRequestDetail } from "@/components/shared/RequestDetailModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -209,6 +212,32 @@ export default function AdminDashboard() {
   const [addMemberOpen, setAddMemberOpen] = useState(false);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
   const [requests, setRequests] = useState<Request[]>(initialRequests);
+  const [detailTarget, setDetailTarget] = useState<WarrantyRequestDetail | null>(null);
+
+  const buildDetail = (r: Request): WarrantyRequestDetail => ({
+    id: r.id.replace("#", ""),
+    customer: {
+      name: r.customer,
+      phone: "0909 000 333",
+      email: "khach@gmail.com",
+      address: "123 Lê Lợi, Quận 1, TP.HCM",
+    },
+    product: {
+      name: r.product,
+      category: r.category,
+      serial: `SN-${r.id.replace(/\D/g, "")}`,
+      warrantyUntil: "20/05/2027",
+    },
+    issue: {
+      type: r.category,
+      description:
+        "Thiết bị không khởi động được sau khi cập nhật firmware. Đèn nguồn nhấp nháy 3 lần rồi tắt. Đã thử rút sạc và khởi động lại nhưng không thành công.",
+      media: [
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70",
+        "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=300&q=70",
+      ],
+    },
+  });
 
   const assignTechnician = (id: string, tech: string) => {
     setRequests((prev) =>
@@ -444,6 +473,22 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex items-center justify-end gap-2">
+                                {r.status === "pending" && (
+                                  <TooltipProvider delayDuration={150}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <button
+                                          onClick={() => setDetailTarget(buildDetail(r))}
+                                          className="p-2 rounded-md border border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                                          aria-label="Xem chi tiết"
+                                        >
+                                          <Eye className="h-4 w-4" />
+                                        </button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>Xem chi tiết</TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
                                 <button
                                   onClick={() =>
                                     setPrintTarget({
@@ -866,6 +911,11 @@ export default function AdminDashboard() {
         open={!!printTarget}
         onOpenChange={(v) => !v && setPrintTarget(null)}
         data={printTarget}
+      />
+      <RequestDetailModal
+        open={!!detailTarget}
+        onOpenChange={(v) => !v && setDetailTarget(null)}
+        request={detailTarget}
       />
     </div>
   );

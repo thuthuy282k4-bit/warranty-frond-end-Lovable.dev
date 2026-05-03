@@ -12,9 +12,12 @@ import {
   Mouse,
   Camera,
   Monitor,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { RequestDetailModal, type WarrantyRequestDetail } from "@/components/shared/RequestDetailModal";
 import {
   Table,
   TableHeader,
@@ -133,6 +136,32 @@ const TechWorkspace = () => {
   const [activeTab, setActiveTab] = useState<Status>("pending");
   const [updateTarget, setUpdateTarget] = useState<string | null>(null);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
+  const [detailTarget, setDetailTarget] = useState<WarrantyRequestDetail | null>(null);
+
+  const buildDetail = (t: Task): WarrantyRequestDetail => ({
+    id: t.id,
+    customer: {
+      name: t.customer,
+      phone: "0909 000 333",
+      email: `${t.customer.split(" ").pop()?.toLowerCase()}@gmail.com`,
+      address: "123 Lê Lợi, Quận 1, TP.HCM",
+    },
+    product: {
+      name: t.product,
+      category: t.category,
+      serial: `SN-${t.id.replace(/\D/g, "")}`,
+      warrantyUntil: "20/05/2027",
+    },
+    issue: {
+      type: t.category,
+      description:
+        "Thiết bị không khởi động được sau khi cập nhật firmware. Đèn nguồn nhấp nháy 3 lần rồi tắt. Đã thử rút sạc và khởi động lại nhưng không thành công.",
+      media: [
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70",
+        "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=300&q=70",
+      ],
+    },
+  });
 
   const counts = useMemo(
     () => ({
@@ -307,14 +336,30 @@ const TechWorkspace = () => {
                           </TableCell>
                           <TableCell className="text-gray-600">{t.createdAt}</TableCell>
                           <TableCell className="text-right">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => accept(t.id)}
-                              className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
-                            >
-                              Tiếp nhận
-                            </Button>
+                            <TooltipProvider delayDuration={150}>
+                              <div className="flex items-center justify-end gap-2">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={() => setDetailTarget(buildDetail(t))}
+                                      className="inline-flex items-center justify-center h-9 w-9 rounded-md border border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition"
+                                      aria-label="Xem chi tiết"
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Xem chi tiết</TooltipContent>
+                                </Tooltip>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => accept(t.id)}
+                                  className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                >
+                                  Tiếp nhận
+                                </Button>
+                              </div>
+                            </TooltipProvider>
                           </TableCell>
                         </TableRow>
                       ))
@@ -451,6 +496,13 @@ const TechWorkspace = () => {
         open={!!printTarget}
         onOpenChange={(v) => !v && setPrintTarget(null)}
         data={printTarget}
+      />
+      <RequestDetailModal
+        open={!!detailTarget}
+        onOpenChange={(v) => !v && setDetailTarget(null)}
+        request={detailTarget}
+        showAccept
+        onAccept={(id) => accept(id)}
       />
     </div>
   );
