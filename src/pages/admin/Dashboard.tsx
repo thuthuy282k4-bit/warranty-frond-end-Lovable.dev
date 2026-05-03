@@ -18,7 +18,10 @@ import {
   TrendingUp,
   CheckCircle2,
   Clock,
+  Eye,
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { RequestDetailModal, type WarrantyRequestDetail } from "@/components/shared/RequestDetailModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
