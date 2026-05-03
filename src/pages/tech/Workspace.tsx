@@ -253,7 +253,7 @@ const TechWorkspace = () => {
                           <TableCell>{t.customer}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {t.icon}
+                              {productIcon(t.category)}
                               {t.product}
                             </div>
                           </TableCell>
@@ -321,7 +321,7 @@ const TechWorkspace = () => {
                           <TableCell>{t.customer}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {t.icon}
+                              {productIcon(t.category)}
                               {t.product}
                             </div>
                           </TableCell>
@@ -373,7 +373,7 @@ const TechWorkspace = () => {
                           <TableCell>{t.customer}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {t.icon}
+                              {productIcon(t.category)}
                               {t.product}
                             </div>
                           </TableCell>
