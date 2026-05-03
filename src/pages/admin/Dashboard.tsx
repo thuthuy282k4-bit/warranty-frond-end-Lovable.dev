@@ -53,6 +53,7 @@ import { ConfirmDeleteModal } from "@/components/admin/ConfirmDeleteModal";
 import { EditProductModal, type EditProductData } from "@/components/admin/EditProductModal";
 import { AddMemberModal } from "@/components/admin/AddMemberModal";
 import { PrintReceiptModal, type WarrantyReceiptData } from "@/components/shared/PrintReceiptModal";
+import { toast } from "sonner";
 
 type Request = {
   id: string;
@@ -64,7 +65,14 @@ type Request = {
   status: "resolved" | "processing" | "pending";
 };
 
-const requests: Request[] = [
+const TECHNICIAN_OPTIONS = [
+  "Chưa phân công",
+  "Nguyễn Văn Tech",
+  "Trần Văn Hardware",
+  "Lê Thị Support",
+] as const;
+
+const initialRequests: Request[] = [
   {
     id: "#WR-0001",
     icon: <Laptop className="h-5 w-5 text-neutral-600" />,
@@ -200,6 +208,20 @@ export default function AdminDashboard() {
   const [memberRoleFilter, setMemberRoleFilter] = useState<string>("all");
   const [addMemberOpen, setAddMemberOpen] = useState(false);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
+  const [requests, setRequests] = useState<Request[]>(initialRequests);
+
+  const assignTechnician = (id: string, tech: string) => {
+    setRequests((prev) =>
+      prev.map((r) =>
+        r.id === id
+          ? { ...r, technician: tech, status: r.status === "pending" && tech !== "Chưa phân công" ? "processing" : r.status }
+          : r,
+      ),
+    );
+    if (tech !== "Chưa phân công") {
+      toast.success("Đã phân công kỹ thuật viên thành công!");
+    }
+  };
 
   const filteredMembers = useMemo(() => {
     const q = memberSearch.trim().toLowerCase();
@@ -398,7 +420,23 @@ export default function AdminDashboard() {
                             <TableCell className="text-neutral-700">{r.customer}</TableCell>
                             <TableCell className="text-neutral-700">{r.product}</TableCell>
                             <TableCell className="text-neutral-600">{r.category}</TableCell>
-                            <TableCell className="text-neutral-600">{r.technician}</TableCell>
+                            <TableCell>
+                              <Select
+                                value={r.technician}
+                                onValueChange={(v) => assignTechnician(r.id, v)}
+                              >
+                                <SelectTrigger className="h-9 w-[180px] text-sm border-gray-200 bg-white">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {TECHNICIAN_OPTIONS.map((t) => (
+                                    <SelectItem key={t} value={t}>
+                                      {t}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
                             <TableCell>
                               <Badge className={`rounded-full font-medium ${s.className}`}>
                                 {s.label}
