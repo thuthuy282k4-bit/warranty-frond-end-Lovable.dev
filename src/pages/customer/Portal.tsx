@@ -11,6 +11,7 @@ import {
   ImageIcon,
   Video,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -26,37 +27,9 @@ import {
   RequestDetailModal,
   type RequestDetail,
 } from "@/components/customer/RequestDetailModal";
+import { useWarrantyStore, type WarrantyRequest } from "@/store/warrantyStore";
 
-const initialRequests: RequestDetail[] = [
-  {
-    id: "WR-880001",
-    status: "completed",
-    product: "Dell XPS 15",
-    productCode: "LAP-2023-002",
-    purchaseDate: "12/03/2025",
-    issueType: "Phần cứng",
-    description: "Pin chai sau 6 tháng sử dụng, máy nóng bất thường khi chạy tác vụ nhẹ.",
-    resolution: "Đã thay pin chính hãng và vệ sinh tản nhiệt. Máy hoạt động ổn định.",
-  },
-  {
-    id: "WR-880002",
-    status: "processing",
-    product: "Logitech MX Master 3S",
-    productCode: "ACC-2024-011",
-    purchaseDate: "20/01/2026",
-    issueType: "Phụ kiện",
-    description: "Con lăn không cuộn được, click trái đôi khi không nhận.",
-  },
-  {
-    id: "WR-880003",
-    status: "pending",
-    product: "Camera IP Dome",
-    productCode: "SEC-2025-003",
-    purchaseDate: "05/04/2026",
-    issueType: "Phần cứng",
-    description: "Camera mất kết nối ngẫu nhiên, hình ảnh ban đêm bị nhiễu nặng.",
-  },
-];
+const CUSTOMER_NAME = "Trần Thị Khách";
 
 const statusMeta = {
   pending: { label: "Chờ xử lý", className: "bg-amber-100 text-amber-700 hover:bg-amber-100" },
@@ -88,11 +61,27 @@ const StatCard = ({
   </div>
 );
 
+const toDetail = (r: WarrantyRequest): RequestDetail => ({
+  id: r.id,
+  status: r.status,
+  product: r.product,
+  productCode: r.productCode ?? "—",
+  purchaseDate: r.createdAt,
+  issueType: r.issueType,
+  description: r.description,
+  resolution: r.solution,
+});
+
 const CustomerPortal = () => {
   const navigate = useNavigate();
-  const [requests, setRequests] = useState<RequestDetail[]>(initialRequests);
+  const { requests: allRequests, addRequest } = useWarrantyStore();
   const [openNew, setOpenNew] = useState(false);
   const [detail, setDetail] = useState<RequestDetail | null>(null);
+
+  const requests = useMemo(
+    () => allRequests.filter((r) => r.customer === CUSTOMER_NAME),
+    [allRequests],
+  );
 
   const counts = useMemo(
     () => ({
@@ -101,26 +90,21 @@ const CustomerPortal = () => {
       processing: requests.filter((r) => r.status === "processing").length,
       completed: requests.filter((r) => r.status === "completed").length,
     }),
-    [requests]
+    [requests],
   );
 
   const handleCreate = (data: NewRequestPayload) => {
-    const id = `WR-${Math.floor(100000 + Math.random() * 900000)}`;
-    setRequests((prev) => [
-      {
-        id,
-        status: "pending",
-        product: data.product,
-        productCode: "—",
-        purchaseDate: new Date().toLocaleDateString("vi-VN"),
-        issueType: data.issueType,
-        description: data.description,
-      },
-      ...prev,
-    ]);
+    addRequest({
+      customer: CUSTOMER_NAME,
+      customerEmail: "customer@gmail.com",
+      product: data.product,
+      productCode: "—",
+      category: data.issueType,
+      issueType: data.issueType,
+      description: data.description,
+    });
+    toast.success("Gửi yêu cầu thành công!");
   };
-
-  const today = new Date().toLocaleDateString("vi-VN");
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -252,12 +236,12 @@ const CustomerPortal = () => {
                           {statusMeta[r.status].label}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-600">{r.purchaseDate}</TableCell>
+                      <TableCell className="text-gray-600">{r.createdAt}</TableCell>
                       <TableCell className="text-right">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setDetail(r)}
+                          onClick={() => setDetail(toDetail(r))}
                         >
                           Chi tiết
                         </Button>
