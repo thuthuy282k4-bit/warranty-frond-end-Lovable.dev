@@ -31,80 +31,17 @@ import { toast } from "sonner";
 import { UpdateStatusModal, type UpdateStatusValue } from "@/components/tech/UpdateStatusModal";
 import { PrintReceiptModal, type WarrantyReceiptData } from "@/components/shared/PrintReceiptModal";
 
-type Status = "pending" | "processing" | "completed";
+import { useWarrantyStore, type WarrantyRequest, type WarrantyStatus } from "@/store/warrantyStore";
 
-type Task = {
-  id: string;
-  icon: React.ReactNode;
-  customer: string;
-  product: string;
-  category: string;
-  createdAt: string;
-  status: Status;
-  solution?: string;
-  completedAt?: string;
+type Status = WarrantyStatus;
+
+const productIcon = (category: string) => {
+  const c = category.toLowerCase();
+  if (c.includes("phụ kiện") || c.includes("accessor")) return <Mouse className="h-4 w-4 text-neutral-600" />;
+  if (c.includes("an ninh") || c.includes("camera")) return <Camera className="h-4 w-4 text-neutral-600" />;
+  if (c.includes("màn hình") || c.includes("monitor")) return <Monitor className="h-4 w-4 text-neutral-600" />;
+  return <Laptop className="h-4 w-4 text-neutral-600" />;
 };
-
-const initialTasks: Task[] = [
-  {
-    id: "WR-711407",
-    icon: <Laptop className="h-4 w-4 text-neutral-600" />,
-    customer: "Trần Thị Khách",
-    product: "Dell XPS 15",
-    category: "Phần cứng",
-    createdAt: "02/05/2026",
-    status: "pending",
-  },
-  {
-    id: "WR-711408",
-    icon: <Mouse className="h-4 w-4 text-neutral-600" />,
-    customer: "Nguyễn Văn A",
-    product: "Logitech MX Master 3S",
-    category: "Phụ kiện",
-    createdAt: "01/05/2026",
-    status: "processing",
-  },
-  {
-    id: "WR-711409",
-    icon: <Camera className="h-4 w-4 text-neutral-600" />,
-    customer: "Lê Thị B",
-    product: "Camera IP Dome",
-    category: "An ninh",
-    createdAt: "30/04/2026",
-    status: "processing",
-  },
-  {
-    id: "WR-711410",
-    icon: <Monitor className="h-4 w-4 text-neutral-600" />,
-    customer: "Phạm Văn C",
-    product: "Dell U2723QE",
-    category: "Màn hình",
-    createdAt: "29/04/2026",
-    status: "processing",
-  },
-  {
-    id: "WR-711411",
-    icon: <Laptop className="h-4 w-4 text-neutral-600" />,
-    customer: "Hoàng Thị D",
-    product: "MacBook Pro 14",
-    category: "Phần cứng",
-    createdAt: "27/04/2026",
-    status: "completed",
-    solution: "Thay pin mới, cập nhật macOS",
-    completedAt: "29/04/2026",
-  },
-  {
-    id: "WR-711412",
-    icon: <Mouse className="h-4 w-4 text-neutral-600" />,
-    customer: "Vũ Văn E",
-    product: "Keychron K2",
-    category: "Phụ kiện",
-    createdAt: "25/04/2026",
-    status: "completed",
-    solution: "Vệ sinh switch, thay keycap",
-    completedAt: "26/04/2026",
-  },
-];
 
 const StatCard = ({
   label,
@@ -132,18 +69,18 @@ const StatCard = ({
 
 const TechWorkspace = () => {
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const { requests: tasks, setStatus, assignTechnician } = useWarrantyStore();
   const [activeTab, setActiveTab] = useState<Status>("pending");
   const [updateTarget, setUpdateTarget] = useState<string | null>(null);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
   const [detailTarget, setDetailTarget] = useState<WarrantyRequestDetail | null>(null);
 
-  const buildDetail = (t: Task): WarrantyRequestDetail => ({
+  const buildDetail = (t: WarrantyRequest): WarrantyRequestDetail => ({
     id: t.id,
     customer: {
       name: t.customer,
       phone: "0909 000 333",
-      email: `${t.customer.split(" ").pop()?.toLowerCase()}@gmail.com`,
+      email: t.customerEmail ?? "customer@gmail.com",
       address: "123 Lê Lợi, Quận 1, TP.HCM",
     },
     product: {
@@ -154,8 +91,7 @@ const TechWorkspace = () => {
     },
     issue: {
       type: t.category,
-      description:
-        "Thiết bị không khởi động được sau khi cập nhật firmware. Đèn nguồn nhấp nháy 3 lần rồi tắt. Đã thử rút sạc và khởi động lại nhưng không thành công.",
+      description: t.description,
       media: [
         "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70",
         "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=300&q=70",
@@ -174,37 +110,27 @@ const TechWorkspace = () => {
   );
 
   const accept = (id: string) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "processing" } : t))
-    );
+    assignTechnician(id, "Nguyễn Văn Tech");
+    setStatus(id, "processing");
     toast.success(`Đã tiếp nhận yêu cầu ${id}`);
     setActiveTab("processing");
   };
 
   const handleUpdate = (status: UpdateStatusValue, note: string) => {
     if (!updateTarget) return;
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id !== updateTarget) return t;
-        if (status === "completed") {
-          return {
-            ...t,
-            status: "completed",
-            solution: note || "Đã xử lý",
-            completedAt: new Date().toLocaleDateString("vi-VN"),
-          };
-        }
-        if (status === "rejected") {
-          return { ...t, status: "pending" };
-        }
-        return t;
-      })
-    );
+    if (status === "completed") {
+      setStatus(updateTarget, "completed", { solution: note || "Đã xử lý" });
+    } else if (status === "rejected") {
+      setStatus(updateTarget, "pending");
+    } else {
+      setStatus(updateTarget, "processing");
+    }
   };
 
   const pendingList = tasks.filter((t) => t.status === "pending");
   const processingList = tasks.filter((t) => t.status === "processing");
   const completedList = tasks.filter((t) => t.status === "completed");
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -327,7 +253,7 @@ const TechWorkspace = () => {
                           <TableCell>{t.customer}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {t.icon}
+                              {productIcon(t.category)}
                               {t.product}
                             </div>
                           </TableCell>
@@ -395,7 +321,7 @@ const TechWorkspace = () => {
                           <TableCell>{t.customer}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {t.icon}
+                              {productIcon(t.category)}
                               {t.product}
                             </div>
                           </TableCell>
@@ -447,7 +373,7 @@ const TechWorkspace = () => {
                           <TableCell>{t.customer}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {t.icon}
+                              {productIcon(t.category)}
                               {t.product}
                             </div>
                           </TableCell>

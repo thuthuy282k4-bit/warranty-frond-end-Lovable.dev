@@ -57,16 +57,7 @@ import { EditProductModal, type EditProductData } from "@/components/admin/EditP
 import { AddMemberModal } from "@/components/admin/AddMemberModal";
 import { PrintReceiptModal, type WarrantyReceiptData } from "@/components/shared/PrintReceiptModal";
 import { toast } from "sonner";
-
-type Request = {
-  id: string;
-  icon: React.ReactNode;
-  customer: string;
-  product: string;
-  category: string;
-  technician: string;
-  status: "resolved" | "processing" | "pending";
-};
+import { useWarrantyStore, type WarrantyRequest } from "@/store/warrantyStore";
 
 const TECHNICIAN_OPTIONS = [
   "Chưa phân công",
@@ -75,35 +66,12 @@ const TECHNICIAN_OPTIONS = [
   "Lê Thị Support",
 ] as const;
 
-const initialRequests: Request[] = [
-  {
-    id: "#WR-0001",
-    icon: <Laptop className="h-5 w-5 text-neutral-600" />,
-    customer: "Trần Thị Khách",
-    product: "Dell XPS 15",
-    category: "Phần cứng",
-    technician: "Nguyễn Văn Tech",
-    status: "resolved",
-  },
-  {
-    id: "#WR-0002",
-    icon: <Mouse className="h-5 w-5 text-neutral-600" />,
-    customer: "Trần Thị Khách",
-    product: "Logitech MX Master 3S",
-    category: "Accessories",
-    technician: "Chưa phân công",
-    status: "processing",
-  },
-  {
-    id: "#WR-0003",
-    icon: <Camera className="h-5 w-5 text-neutral-600" />,
-    customer: "Trần Thị Khách",
-    product: "Camera IP Dome",
-    category: "Điều khiển",
-    technician: "Nguyễn Văn Tech",
-    status: "pending",
-  },
-];
+const productIcon = (category: string) => {
+  const c = category.toLowerCase();
+  if (c.includes("phụ kiện") || c.includes("accessor")) return <Mouse className="h-5 w-5 text-neutral-600" />;
+  if (c.includes("an ninh") || c.includes("camera")) return <Camera className="h-5 w-5 text-neutral-600" />;
+  return <Laptop className="h-5 w-5 text-neutral-600" />;
+};
 
 type Product = {
   code: string;
@@ -136,7 +104,7 @@ const categories: Category[] = [
 ];
 
 const statusConfig = {
-  resolved: { label: "Đã giải quyết", className: "bg-green-100 text-green-700 hover:bg-green-100" },
+  completed: { label: "Đã giải quyết", className: "bg-green-100 text-green-700 hover:bg-green-100" },
   processing: { label: "Đang xử lý", className: "bg-blue-100 text-blue-700 hover:bg-blue-100" },
   pending: { label: "Chờ xử lý", className: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100" },
 };
@@ -211,15 +179,15 @@ export default function AdminDashboard() {
   const [memberRoleFilter, setMemberRoleFilter] = useState<string>("all");
   const [addMemberOpen, setAddMemberOpen] = useState(false);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
-  const [requests, setRequests] = useState<Request[]>(initialRequests);
+  const { requests, assignTechnician: storeAssign } = useWarrantyStore();
   const [detailTarget, setDetailTarget] = useState<WarrantyRequestDetail | null>(null);
 
-  const buildDetail = (r: Request): WarrantyRequestDetail => ({
+  const buildDetail = (r: WarrantyRequest): WarrantyRequestDetail => ({
     id: r.id.replace("#", ""),
     customer: {
       name: r.customer,
       phone: "0909 000 333",
-      email: "khach@gmail.com",
+      email: r.customerEmail ?? "khach@gmail.com",
       address: "123 Lê Lợi, Quận 1, TP.HCM",
     },
     product: {
@@ -230,8 +198,7 @@ export default function AdminDashboard() {
     },
     issue: {
       type: r.category,
-      description:
-        "Thiết bị không khởi động được sau khi cập nhật firmware. Đèn nguồn nhấp nháy 3 lần rồi tắt. Đã thử rút sạc và khởi động lại nhưng không thành công.",
+      description: r.description,
       media: [
         "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70",
         "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=300&q=70",
@@ -240,13 +207,7 @@ export default function AdminDashboard() {
   });
 
   const assignTechnician = (id: string, tech: string) => {
-    setRequests((prev) =>
-      prev.map((r) =>
-        r.id === id
-          ? { ...r, technician: tech, status: r.status === "pending" && tech !== "Chưa phân công" ? "processing" : r.status }
-          : r,
-      ),
-    );
+    storeAssign(id, tech);
     if (tech !== "Chưa phân công") {
       toast.success("Đã phân công kỹ thuật viên thành công!");
     }
@@ -371,28 +332,39 @@ export default function AdminDashboard() {
           </div>
 
           {/* Stats */}
+          {(() => null)()}
+          {(() => {
+            return null;
+          })()}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <StatCard
               title="Tổng yêu cầu"
-              value="6"
+              value={String(requests.length)}
               badgeText="Tất cả yêu cầu"
               badgeClass="bg-blue-100 text-blue-700"
             />
             <StatCard
               title="Đang xử lý"
-              value="3"
+              value={String(requests.filter((r) => r.status === "processing").length)}
               badgeText="Đang kiểm tra"
               badgeClass="bg-orange-100 text-orange-700"
             />
             <StatCard
               title="Hoàn thành"
-              value="2"
+              value={String(requests.filter((r) => r.status === "completed").length)}
               badgeText="Đã hoàn tất"
               badgeClass="bg-green-100 text-green-700"
             />
-            <StatCard title="Tỷ lệ giải quyết" value="33.3%">
-              <Progress value={33.3} className="h-2 mt-3" />
-            </StatCard>
+            {(() => {
+              const total = requests.length || 1;
+              const done = requests.filter((r) => r.status === "completed").length;
+              const pct = Math.round((done / total) * 1000) / 10;
+              return (
+                <StatCard title="Tỷ lệ giải quyết" value={`${pct}%`}>
+                  <Progress value={pct} className="h-2 mt-3" />
+                </StatCard>
+              );
+            })()}
           </div>
 
           {/* Table card */}
@@ -443,7 +415,7 @@ export default function AdminDashboard() {
                             <TableCell className="font-medium text-neutral-900">{r.id}</TableCell>
                             <TableCell>
                               <div className="w-10 h-10 rounded-md bg-neutral-100 flex items-center justify-center">
-                                {r.icon}
+                                {productIcon(r.category)}
                               </div>
                             </TableCell>
                             <TableCell className="text-neutral-700">{r.customer}</TableCell>

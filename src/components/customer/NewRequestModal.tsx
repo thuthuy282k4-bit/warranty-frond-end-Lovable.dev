@@ -71,7 +71,6 @@ export const NewRequestModal = ({ open, onOpenChange, onSubmit }: Props) => {
   const handleSubmit = () => {
     if (!valid) return;
     onSubmit({ product, issueType, description, files });
-    toast.success("Gửi yêu cầu bảo hành thành công!");
     onOpenChange(false);
   };
 
