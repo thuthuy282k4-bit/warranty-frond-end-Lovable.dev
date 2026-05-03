@@ -179,15 +179,15 @@ export default function AdminDashboard() {
   const [memberRoleFilter, setMemberRoleFilter] = useState<string>("all");
   const [addMemberOpen, setAddMemberOpen] = useState(false);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
-  const [requests, setRequests] = useState<Request[]>(initialRequests);
+  const { requests, assignTechnician: storeAssign } = useWarrantyStore();
   const [detailTarget, setDetailTarget] = useState<WarrantyRequestDetail | null>(null);
 
-  const buildDetail = (r: Request): WarrantyRequestDetail => ({
+  const buildDetail = (r: WarrantyRequest): WarrantyRequestDetail => ({
     id: r.id.replace("#", ""),
     customer: {
       name: r.customer,
       phone: "0909 000 333",
-      email: "khach@gmail.com",
+      email: r.customerEmail ?? "khach@gmail.com",
       address: "123 Lê Lợi, Quận 1, TP.HCM",
     },
     product: {
@@ -198,8 +198,7 @@ export default function AdminDashboard() {
     },
     issue: {
       type: r.category,
-      description:
-        "Thiết bị không khởi động được sau khi cập nhật firmware. Đèn nguồn nhấp nháy 3 lần rồi tắt. Đã thử rút sạc và khởi động lại nhưng không thành công.",
+      description: r.description,
       media: [
         "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70",
         "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=300&q=70",
@@ -208,13 +207,7 @@ export default function AdminDashboard() {
   });
 
   const assignTechnician = (id: string, tech: string) => {
-    setRequests((prev) =>
-      prev.map((r) =>
-        r.id === id
-          ? { ...r, technician: tech, status: r.status === "pending" && tech !== "Chưa phân công" ? "processing" : r.status }
-          : r,
-      ),
-    );
+    storeAssign(id, tech);
     if (tech !== "Chưa phân công") {
       toast.success("Đã phân công kỹ thuật viên thành công!");
     }
