@@ -404,7 +404,7 @@ export default function AdminDashboard() {
                             <TableCell className="font-medium text-neutral-900">{r.id}</TableCell>
                             <TableCell>
                               <div className="w-10 h-10 rounded-md bg-neutral-100 flex items-center justify-center">
-                                {r.icon}
+                                {productIcon(r.category)}
                               </div>
                             </TableCell>
                             <TableCell className="text-neutral-700">{r.customer}</TableCell>
