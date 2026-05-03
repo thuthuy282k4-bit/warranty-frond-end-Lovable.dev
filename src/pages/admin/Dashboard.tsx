@@ -58,16 +58,6 @@ import { AddMemberModal } from "@/components/admin/AddMemberModal";
 import { PrintReceiptModal, type WarrantyReceiptData } from "@/components/shared/PrintReceiptModal";
 import { toast } from "sonner";
 
-type Request = {
-  id: string;
-  icon: React.ReactNode;
-  customer: string;
-  product: string;
-  category: string;
-  technician: string;
-  status: "resolved" | "processing" | "pending";
-};
-
 const TECHNICIAN_OPTIONS = [
   "Chưa phân công",
   "Nguyễn Văn Tech",
@@ -75,35 +65,12 @@ const TECHNICIAN_OPTIONS = [
   "Lê Thị Support",
 ] as const;
 
-const initialRequests: Request[] = [
-  {
-    id: "#WR-0001",
-    icon: <Laptop className="h-5 w-5 text-neutral-600" />,
-    customer: "Trần Thị Khách",
-    product: "Dell XPS 15",
-    category: "Phần cứng",
-    technician: "Nguyễn Văn Tech",
-    status: "resolved",
-  },
-  {
-    id: "#WR-0002",
-    icon: <Mouse className="h-5 w-5 text-neutral-600" />,
-    customer: "Trần Thị Khách",
-    product: "Logitech MX Master 3S",
-    category: "Accessories",
-    technician: "Chưa phân công",
-    status: "processing",
-  },
-  {
-    id: "#WR-0003",
-    icon: <Camera className="h-5 w-5 text-neutral-600" />,
-    customer: "Trần Thị Khách",
-    product: "Camera IP Dome",
-    category: "Điều khiển",
-    technician: "Nguyễn Văn Tech",
-    status: "pending",
-  },
-];
+const productIcon = (category: string) => {
+  const c = category.toLowerCase();
+  if (c.includes("phụ kiện") || c.includes("accessor")) return <Mouse className="h-5 w-5 text-neutral-600" />;
+  if (c.includes("an ninh") || c.includes("camera")) return <Camera className="h-5 w-5 text-neutral-600" />;
+  return <Laptop className="h-5 w-5 text-neutral-600" />;
+};
 
 type Product = {
   code: string;
