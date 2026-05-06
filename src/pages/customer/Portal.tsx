@@ -28,6 +28,8 @@ import {
   type RequestDetail,
 } from "@/components/customer/RequestDetailModal";
 import { useWarrantyStore, type WarrantyRequest } from "@/store/warrantyStore";
+import { useNotificationStore } from "@/store/notificationStore";
+import { NotificationBell } from "@/components/shared/NotificationBell";
 
 const CUSTOMER_NAME = "Trần Thị Khách";
 
@@ -75,6 +77,7 @@ const toDetail = (r: WarrantyRequest): RequestDetail => ({
 const CustomerPortal = () => {
   const navigate = useNavigate();
   const { requests: allRequests, addRequest } = useWarrantyStore();
+  const { notify } = useNotificationStore();
   const [openNew, setOpenNew] = useState(false);
   const [detail, setDetail] = useState<RequestDetail | null>(null);
 
@@ -94,7 +97,7 @@ const CustomerPortal = () => {
   );
 
   const handleCreate = (data: NewRequestPayload) => {
-    addRequest({
+    const created = addRequest({
       customer: CUSTOMER_NAME,
       customerEmail: "customer@gmail.com",
       product: data.product,
@@ -102,6 +105,10 @@ const CustomerPortal = () => {
       category: data.issueType,
       issueType: data.issueType,
       description: data.description,
+    });
+    notify({
+      message: `Khách hàng ${CUSTOMER_NAME} vừa tạo yêu cầu bảo hành mới #${created.id}`,
+      audience: ["admin", "tech"],
     });
     toast.success("Gửi yêu cầu thành công!");
   };
@@ -152,6 +159,7 @@ const CustomerPortal = () => {
               <Plus className="h-4 w-4 mr-1.5" />
               Yêu cầu bảo hành mới
             </Button>
+            <NotificationBell role="customer" customerEmail="customer@gmail.com" />
             <div className="flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-full bg-neutral-900 text-white text-xs font-semibold flex items-center justify-center">
                 T
