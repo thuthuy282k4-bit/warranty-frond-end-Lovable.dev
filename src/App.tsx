@@ -10,12 +10,14 @@ import TechWorkspace from "./pages/tech/Workspace.tsx";
 import CustomerPortal from "./pages/customer/Portal.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { WarrantyProvider } from "./store/warrantyStore.tsx";
+import { NotificationProvider } from "./store/notificationStore.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <WarrantyProvider>
+    <NotificationProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -31,6 +33,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </NotificationProvider>
     </WarrantyProvider>
   </QueryClientProvider>
 );
