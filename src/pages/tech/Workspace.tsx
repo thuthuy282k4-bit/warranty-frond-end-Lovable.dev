@@ -29,6 +29,8 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { UpdateStatusModal, type UpdateStatusValue } from "@/components/tech/UpdateStatusModal";
+import { useNotificationStore } from "@/store/notificationStore";
+import { NotificationBell } from "@/components/shared/NotificationBell";
 import { PrintReceiptModal, type WarrantyReceiptData } from "@/components/shared/PrintReceiptModal";
 
 import { useWarrantyStore, type WarrantyRequest, type WarrantyStatus } from "@/store/warrantyStore";
@@ -70,6 +72,7 @@ const StatCard = ({
 const TechWorkspace = () => {
   const navigate = useNavigate();
   const { requests: tasks, setStatus, assignTechnician } = useWarrantyStore();
+  const { notify } = useNotificationStore();
   const [activeTab, setActiveTab] = useState<Status>("pending");
   const [updateTarget, setUpdateTarget] = useState<string | null>(null);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
@@ -109,9 +112,20 @@ const TechWorkspace = () => {
     [tasks]
   );
 
+  const notifyCustomer = (id: string, statusLabel: string) => {
+    const t = tasks.find((x) => x.id === id);
+    if (!t) return;
+    notify({
+      message: `Yêu cầu #${id} của bạn đã được cập nhật trạng thái thành: ${statusLabel}`,
+      audience: ["customer"],
+      customerEmail: t.customerEmail,
+    });
+  };
+
   const accept = (id: string) => {
     assignTechnician(id, "Nguyễn Văn Tech");
     setStatus(id, "processing");
+    notifyCustomer(id, "Đang xử lý");
     toast.success(`Đã tiếp nhận yêu cầu ${id}`);
     setActiveTab("processing");
   };
@@ -120,10 +134,13 @@ const TechWorkspace = () => {
     if (!updateTarget) return;
     if (status === "completed") {
       setStatus(updateTarget, "completed", { solution: note || "Đã xử lý" });
+      notifyCustomer(updateTarget, "Hoàn thành");
     } else if (status === "rejected") {
       setStatus(updateTarget, "pending");
+      notifyCustomer(updateTarget, "Từ chối");
     } else {
       setStatus(updateTarget, "processing");
+      notifyCustomer(updateTarget, "Đang xử lý");
     }
   };
 
@@ -170,11 +187,14 @@ const TechWorkspace = () => {
             </h1>
             <p className="text-xs text-gray-500">Tiếp nhận và xử lý yêu cầu bảo hành</p>
           </div>
-          <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-full bg-neutral-900 text-white text-xs font-semibold flex items-center justify-center">
-              N
+          <div className="flex items-center gap-3">
+            <NotificationBell role="tech" />
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-full bg-neutral-900 text-white text-xs font-semibold flex items-center justify-center">
+                N
+              </div>
+              <span className="text-sm font-medium text-neutral-900">Nguyen Van Tech</span>
             </div>
-            <span className="text-sm font-medium text-neutral-900">Nguyen Van Tech</span>
           </div>
         </header>
 
