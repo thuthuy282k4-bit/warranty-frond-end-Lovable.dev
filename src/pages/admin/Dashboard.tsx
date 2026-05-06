@@ -58,6 +58,8 @@ import { AddMemberModal } from "@/components/admin/AddMemberModal";
 import { PrintReceiptModal, type WarrantyReceiptData } from "@/components/shared/PrintReceiptModal";
 import { toast } from "sonner";
 import { useWarrantyStore, type WarrantyRequest } from "@/store/warrantyStore";
+import { useNotificationStore } from "@/store/notificationStore";
+import { NotificationBell } from "@/components/shared/NotificationBell";
 
 const TECHNICIAN_OPTIONS = [
   "Chưa phân công",
@@ -180,6 +182,7 @@ export default function AdminDashboard() {
   const [addMemberOpen, setAddMemberOpen] = useState(false);
   const [printTarget, setPrintTarget] = useState<WarrantyReceiptData | null>(null);
   const { requests, assignTechnician: storeAssign } = useWarrantyStore();
+  const { notify } = useNotificationStore();
   const [detailTarget, setDetailTarget] = useState<WarrantyRequestDetail | null>(null);
 
   const buildDetail = (r: WarrantyRequest): WarrantyRequestDetail => ({
@@ -207,9 +210,17 @@ export default function AdminDashboard() {
   });
 
   const assignTechnician = (id: string, tech: string) => {
+    const r = requests.find((x) => x.id === id);
     storeAssign(id, tech);
     if (tech !== "Chưa phân công") {
       toast.success("Đã phân công kỹ thuật viên thành công!");
+      if (r && r.status === "pending") {
+        notify({
+          message: `Yêu cầu #${id} của bạn đã được cập nhật trạng thái thành: Đang xử lý`,
+          audience: ["customer"],
+          customerEmail: r.customerEmail,
+        });
+      }
     }
   };
 
@@ -318,6 +329,7 @@ export default function AdminDashboard() {
               <p className="text-neutral-500 mt-1">Quản lý hệ thống bảo hành WarrantyHub.</p>
             </div>
             <div className="flex items-center gap-3">
+              <NotificationBell role="admin" />
               <Button variant="outline" className="border-gray-300">
                 Thêm tài khoản
               </Button>
