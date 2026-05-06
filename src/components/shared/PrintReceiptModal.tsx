@@ -81,14 +81,14 @@ export const PrintReceiptModal = ({ open, onOpenChange, data }: Props) => {
                 <p className="text-blue-600 font-bold text-xl tracking-tight">
                   AS-LIGHTING
                 </p>
-                <p className="text-[11px] text-gray-500 mt-0.5">
-                  Giải pháp Công nghệ Ánh Sáng
+                <p className="text-[11px] text-gray-500 mt-0.5 italic">
+                  More than business. It's friendship.
                 </p>
               </div>
               <div className="text-right text-[11px] text-gray-600 leading-relaxed">
-                <p>123 Nguyễn Văn Linh, Q.7, TP.HCM</p>
+                <p>Số 18 ngõ 172/69 Phú Diễn, Bắc Từ Liêm Hà Nội</p>
                 <p>Hotline: 1900 6868</p>
-                <p>support@anhsang.vn</p>
+                <p>info@lightjsc.com</p>
               </div>
             </div>
 
